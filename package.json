@@ -5,9 +5,15 @@
   "type": "module",
   "scripts": {
     "data": "node scripts/build-data.mjs",
-    "dev": "npm run data && vite",
-    "build": "npm run data && vite build",
-    "preview": "vite preview"
+    "series": "node scripts/build-series.mjs",
+    "series:find": "node scripts/find-series.mjs",
+    "dev": "npm run data && npm run series && npm run emae && npm run ipi && npm run empleo && npm run trabajo && vite",
+    "build": "npm run data && npm run series && npm run emae && npm run ipi && npm run empleo && npm run trabajo && vite build",
+    "preview": "vite preview",
+    "emae": "node scripts/build-emae.mjs",
+    "ipi": "node scripts/build-ipi.mjs",
+    "empleo": "node scripts/build-empleo.mjs",
+    "trabajo": "node scripts/build-trabajo.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

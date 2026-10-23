@@ -101,3 +101,40 @@ footer { max-width: 1480px; margin: 0 auto; padding: 0 clamp(12px, 3vw, 32px) 40
   tbody th.lbl { min-width: 170px; }
 }
 @media (prefers-reduced-motion: reduce) { .drawer { animation: none; } html { scroll-behavior: auto; } }
+
+/* Series trimestrales */
+.hist-tools { gap: 10px; flex-wrap: wrap; align-items: center; margin: 4px 0 14px; }
+.sel { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.sel select { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.seg.small button { padding: 5px 10px; font-size: 12px; }
+.seg.small button:hover { background: var(--accent-soft); color: var(--ink); }
+.btn { font: 500 13px var(--font); border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 7px 12px; border-radius: 8px; cursor: pointer; }
+.btn:hover { border-color: var(--accent); }
+.tablewrap.hist { max-height: 72vh; overflow: auto; }
+.hist thead th { position: sticky; top: 0; z-index: 2; }
+.hist thead th.lbl { left: 0; z-index: 3; }
+.hist tbody th.lbl small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
+.hist td.num { min-width: 74px; }
+.hist tr.sub td { position: sticky; left: 0; }
+.notes { color: var(--muted); font-size: 12px; margin: 14px 0 0; padding-left: 18px; max-width: 90ch; }
+.missing { margin-top: 10px; font-size: 12px; color: var(--muted); }
+.empty { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 20px; max-width: 60ch; }
+.meta-list { display: grid; gap: 8px; margin: 18px 0 0; font-size: 13px; }
+.meta-list div { display: grid; grid-template-columns: 150px 1fr; gap: 8px; }
+.meta-list dt { color: var(--muted); } .meta-list dd { margin: 0; word-break: break-word; }
+.meta-list a { color: var(--accent); }
+
+.meta-list dd.warn { color: var(--neg); }
+
+.seg.wrap { flex-wrap: wrap; }
+.mode-desc { color: var(--muted); font-size: 12px; margin: 0 0 10px; }
+.mode-desc b { color: var(--ink); }
+
+td.filled { font-style: italic; text-decoration: underline dotted var(--muted); text-underline-offset: 3px; }
+td.gap { background: repeating-linear-gradient(135deg, transparent 0 6px, var(--zebra) 6px 12px); }
+.hist tbody th.lbl small.warn { color: var(--neg); }
+
+.hist tbody th.lbl.head { font-weight: 700; }
+.hist tbody th.lbl { min-width: 260px; }
+
+.warn-flag { color: var(--sun); cursor: help; }

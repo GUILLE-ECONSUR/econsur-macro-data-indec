@@ -3,8 +3,13 @@ import data from './data/indec.json'
 import BlockTable from './components/BlockTable.jsx'
 import KpiStrip, { pickKpis } from './components/KpiStrip.jsx'
 import Drawer from './components/Drawer.jsx'
+import History from './components/History.jsx'
+import Emae from './components/Emae.jsx'
+import Ipi from './components/Ipi.jsx'
+import Empleo from './components/Empleo.jsx'
+import Trabajo from './components/Trabajo.jsx'
 
-const TABS = [data.main, ...data.sheets, { id: 'fuentes', name: 'Fuentes' }]
+const TABS = [data.main, { id: 'series-trimestrales', name: 'Series trimestrales' }, { id: 'balance-cambiario', name: 'Balance cambiario' }, { id: 'emae', name: 'EMAE' }, { id: 'ipi', name: 'IPI manufacturero' }, { id: 'empleo-salarios', name: 'Empleo y Salarios' }, { id: 'trabajo', name: 'Trabajo' }, ...data.sheets, { id: 'fuentes', name: 'Fuentes' }]
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1)
 const fmtDate = (iso) => (iso ? new Date(iso + 'T12:00:00').toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' }) : '')
 
@@ -128,6 +133,12 @@ export default function App() {
       </nav>
       <main>
         {tab.id === 'principales' ? <Main query={query} onPick={onPick} />
+          : tab.id === 'series-trimestrales' ? <History key="s" query={query} tab="series" />
+          : tab.id === 'balance-cambiario' ? <History key="b" query={query} tab="balance" />
+          : tab.id === 'emae' ? <Emae key="e" query={query} />
+          : tab.id === 'ipi' ? <Ipi key="i" query={query} />
+          : tab.id === 'empleo-salarios' ? <Empleo key="w" query={query} />
+          : tab.id === 'trabajo' ? <Trabajo key="t" query={query} />
           : tab.id === 'fuentes' ? <Sources />
           : <Sheet sheet={tab} query={query} onPick={onPick} />}
       </main>
