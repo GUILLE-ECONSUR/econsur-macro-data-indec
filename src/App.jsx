@@ -3,13 +3,33 @@ import data from './data/indec.json'
 import BlockTable from './components/BlockTable.jsx'
 import KpiStrip, { pickKpis } from './components/KpiStrip.jsx'
 import Drawer from './components/Drawer.jsx'
-import History from './components/History.jsx'
+import History, { exportHistory } from './components/History.jsx'
 import Emae from './components/Emae.jsx'
+import { exportMonthly } from './components/MonthlyTable.jsx'
+import { exportSheet, exportSources } from './exporters.js'
+import emaeData from './data/emae.json'
+import ipiData from './data/ipi.json'
+import empleoData from './data/empleo.json'
+import trabajoData from './data/trabajo.json'
 import Ipi from './components/Ipi.jsx'
 import Empleo from './components/Empleo.jsx'
 import Trabajo from './components/Trabajo.jsx'
 
 const TABS = [data.main, { id: 'series-trimestrales', name: 'Series trimestrales' }, { id: 'balance-cambiario', name: 'Balance cambiario' }, { id: 'emae', name: 'EMAE' }, { id: 'ipi', name: 'IPI manufacturero' }, { id: 'empleo-salarios', name: 'Empleo y Salarios' }, { id: 'trabajo', name: 'Trabajo' }, ...data.sheets, { id: 'fuentes', name: 'Fuentes' }]
+// Exporta TODOS los datos de la solapa activa en un CSV
+function exportTab(tab) {
+  switch (tab.id) {
+    case 'principales': return exportSheet({ id: 'principales', name: 'Principales indicadores', blocks: data.main.blocks })
+    case 'series-trimestrales': return exportHistory('series')
+    case 'balance-cambiario': return exportHistory('balance')
+    case 'emae': return exportMonthly(emaeData, 'emae')
+    case 'ipi': return exportMonthly(ipiData, 'ipi')
+    case 'empleo-salarios': return exportMonthly(empleoData, 'empleo-salarios', 'puestos / millones de $')
+    case 'trabajo': return exportMonthly(trabajoData, 'trabajo', '% / miles de personas')
+    case 'fuentes': return exportSources(data.sources)
+    default: return exportSheet(tab)
+  }
+}
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1)
 const fmtDate = (iso) => (iso ? new Date(iso + 'T12:00:00').toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' }) : '')
 
@@ -117,12 +137,15 @@ export default function App() {
     <>
       <header className="top">
         <div className="brand"><Logo /><div><strong>EconSur Macro</strong><span>Indicadores del INDEC</span></div></div>
-        {tab.id !== 'fuentes' && (
-          <label className="search">
-            <span className="sr">Buscar indicador</span>
-            <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar indicador…" />
-          </label>
-        )}
+        <div className="top-actions">
+          <button className="btn-top" onClick={() => exportTab(tab)} title={`Descarga todos los datos de «${tab.name}» en un archivo CSV`}>⬇ Exportar CSV</button>
+          {tab.id !== 'fuentes' && (
+            <label className="search">
+              <span className="sr">Buscar indicador</span>
+              <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar indicador…" />
+            </label>
+          )}
+        </div>
       </header>
       <nav className="tabs" aria-label="Secciones">
         {TABS.map((t) => (

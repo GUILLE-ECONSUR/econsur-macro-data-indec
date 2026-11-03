@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import hist from '../data/series.json'
 import { fmt, tone } from '../format.js'
+import { downloadCSV, stamp, val } from '../csv.js'
 
 const MODES = [
   { id: 'orig', label: 'Serie original', lag: 0 },
@@ -86,10 +87,22 @@ function SeriesPanel({ s, mode, from, to, onClose }) {
   )
 }
 
-function toCSV(rows, cols, mode) {
-  const head = ['Variable', 'Unidad', ...cols.map((i) => hist.qs[i])]
-  const lines = [head, ...rows.map((s) => [s.label, s.unit, ...cols.map((i) => { const c = cellFor(s, i, mode); return c.v == null ? '' : (c.k === 'pct' ? (c.v * 100).toFixed(2) : c.v.toFixed(4)) })])]
-  return lines.map((r) => r.map((x) => `"${String(x).replace(/"/g, '""')}"`).join(';')).join('\n')
+function viewRows(rows, cols, mode) {
+  return [['Variable', 'Unidad', ...cols.map((i) => hist.qs[i])], ...rows.map((s) => [s.label, s.unit, ...cols.map((i) => val(cellFor(s, i, mode)))])]
+}
+
+// Exporta TODA la tabla de la solapa (todos los trimestres y las 3 modalidades)
+export function exportHistory(tab = 'series') {
+  const rows = [['Variable', 'Grupo', 'Modalidad', 'Unidad', ...hist.qs]]
+  for (const s of hist.series.filter((x) => (x.tab ?? 'series') === tab && x.values)) {
+    for (const m of MODES) {
+      const vals = hist.qs.map((_, i) => val(cellFor(s, i, m)))
+      if (vals.every((v) => v == null)) continue
+      const unit = m.lag === 0 ? s.unit : s.type === 'idx' ? '%' : s.type === 'rate' ? 'p.p.' : s.unit
+      rows.push([s.label, s.group, m.label, unit, ...vals])
+    }
+  }
+  downloadCSV(`econsur-${tab === 'balance' ? 'balance-cambiario' : 'series-trimestrales'}-completo-${stamp()}.csv`, rows)
 }
 
 const TABS = {
@@ -134,14 +147,7 @@ export default function History({ query, tab = 'series' }) {
   const setPreset = (n) => { setTo(last); setFrom(n ? Math.max(0, last - n + 1) : 0) }
   const onFrom = (v) => { setFrom(+v); if (+v > to) setTo(+v) }
   const onTo = (v) => { setTo(+v); if (+v < from) setFrom(+v) }
-  const download = () => {
-    const blob = new Blob(['\ufeff' + toCSV(visible, cols, mode)], { type: 'text/csv;charset=utf-8' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `econsur-${tab}-${modeId}-${hist.qs[from]}-${hist.qs[to]}.csv`
-    a.click()
-    URL.revokeObjectURL(a.href)
-  }
+  const download = () => downloadCSV(`econsur-${tab}-${modeId}-${hist.qs[from]}-${hist.qs[to]}.csv`, viewRows(visible, cols, mode))
 
   let prevGroup = null
   return (
@@ -168,7 +174,7 @@ export default function History({ query, tab = 'series' }) {
         <div className="seg small" aria-label="Rangos rápidos">
           {PRESETS.map((p) => <button key={p.label} onClick={() => setPreset(p.n)}>{p.label}</button>)}
         </div>
-        <button className="btn" onClick={download}>Descargar CSV</button>
+        <button className="btn" onClick={download} title="Descarga la vista actual (modalidad y período elegidos)">Descargar vista (CSV)</button>
       </div>
 
       <div className="tablewrap hist" ref={wrap}>

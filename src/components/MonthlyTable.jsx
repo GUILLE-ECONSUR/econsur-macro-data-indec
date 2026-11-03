@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { fmt, tone } from '../format.js'
+import { downloadCSV, stamp, val } from '../csv.js'
 
 const MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
 const MESL = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
@@ -161,16 +162,10 @@ export default function MonthlyTable({ query, data, name, title, lede, noun, fil
   const setPreset = (k) => { setTo(n - 1); setFrom(k ? Math.max(0, n - k) : 0) }
   const onFrom = (v) => { setFrom(+v); if (+v > to) setTo(+v) }
   const onTo = (v) => { setTo(+v); if (+v < from) setFrom(+v) }
-  const download = () => {
-    const head = ['Serie', 'Grupo', ...cols.map((i) => data.months[i])]
-    const lines = [head, ...rows.map((s) => [s.label, s.group, ...cols.map((i) => { const c = cell(s, i); return c.v == null ? '' : c.k === 'pct' ? (c.v * 100).toFixed(2) : c.v.toFixed(2) })])]
-    const csv = lines.map((r) => r.map((x) => `"${String(x).replace(/"/g, '""')}"`).join(';')).join('\n')
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' }))
-    a.download = `econsur-${fileTag}-${modeId}-${data.months[from]}-${data.months[to]}.csv`
-    a.click()
-    URL.revokeObjectURL(a.href)
-  }
+  const download = () => downloadCSV(`econsur-${fileTag}-${modeId}-${data.months[from]}-${data.months[to]}.csv`, [
+    ['Serie', 'Grupo', ...cols.map((i) => data.months[i])],
+    ...rows.map((s) => [s.label, s.group, ...cols.map((i) => val(cell(s, i)))]),
+  ])
 
   let prev = null
   const ctrl = data.meta.control
@@ -196,7 +191,7 @@ export default function MonthlyTable({ query, data, name, title, lede, noun, fil
         <div className="seg small" aria-label="Rangos rápidos">
           {PRESETS.map((p) => <button key={p.label} onClick={() => setPreset(p.n)}>{p.label}</button>)}
         </div>
-        <button className="btn" onClick={download}>Descargar CSV</button>
+        <button className="btn" onClick={download} title="Descarga la vista actual (modalidad y período elegidos)">Descargar vista (CSV)</button>
       </div>
       <p className="mode-desc"><b>{mode.label}:</b> {mode.desc}</p>
 
@@ -267,4 +262,22 @@ export default function MonthlyTable({ query, data, name, title, lede, noun, fil
       {sel && <SeriesPanel s={sel} mode={mode} vals={computed[sel.key] ?? []} from={from} to={to} data={data} name={name} levelUnit={levelUnit} W={W} onClose={() => setSel(null)} />}
     </>
   )
+}
+
+// Exporta TODA la tabla de la solapa: todas las series, todos los períodos y todas las modalidades
+export function exportMonthly(data, fileTag, levelUnit = 'índice 2004=100') {
+  const freq = isQ(data.months[0]) ? 'Q' : 'M'
+  const modes = modesFor(freq, '', '')
+  const rows = [['Serie', 'Grupo', 'Modalidad', 'Unidad', ...data.months]]
+  for (const s of data.series) {
+    if (!s.orig) continue
+    for (const m of modes) {
+      const arr = m.fn(s, data.months)
+      if (!arr || arr.every((v) => v == null)) continue
+      const k = kindFor(m, s)
+      const unit = k === 'pct' || k === 'pts' ? '%' : k === 'pp' ? 'p.p.' : s.unit || levelUnit
+      rows.push([s.label, s.group, m.label, unit, ...arr.map((v) => (v == null ? null : k === 'pct' ? v * 100 : v))])
+    }
+  }
+  downloadCSV(`econsur-${fileTag}-completo-${stamp()}.csv`, rows)
 }

@@ -44,7 +44,6 @@ main { max-width: 1480px; margin: 0 auto; padding: 24px clamp(12px, 3vw, 32px) 4
 .kpi-meta { font-size: 12px; color: var(--muted); }
 .kpi-chg { display: flex; gap: 12px; font-size: 12px; flex-wrap: wrap; min-height: 18px; }
 .kpi-chg em { color: var(--muted); font-style: normal; }
-.kpi-spark { margin: 4px -14px 0; }
 
 .toolbar { display: flex; margin: 22px 0 0; }
 .seg { display: inline-flex; background: var(--paper); border: 1px solid var(--line); border-radius: 9px; padding: 3px; }
@@ -138,3 +137,12 @@ td.gap { background: repeating-linear-gradient(135deg, transparent 0 6px, var(--
 .hist tbody th.lbl { min-width: 260px; }
 
 .warn-flag { color: var(--sun); cursor: help; }
+
+.chart-note { font-size: 12px; color: var(--muted); margin: 4px 0 0; }
+.chart-note b { color: var(--neg); font-weight: 600; }
+.chart-note .dot { display: inline-block; width: 9px; height: 9px; border-radius: 2px; background: var(--sun); margin-right: 4px; }
+.kpi { padding-bottom: 12px; }
+
+.top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.btn-top { font: 500 13px var(--font); color: #fff; background: #17304a; border: 1px solid #2d4560; padding: 8px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+.btn-top:hover { border-color: var(--sun); }

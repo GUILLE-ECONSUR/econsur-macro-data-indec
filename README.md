@@ -87,6 +87,24 @@ API Series de Tiempo ──► scripts/build-series.mjs ──► src/data/serie
 - Para refrescar el histórico sin subir un Excel, `.github/workflows/refresh.yml` pide un deploy
   semanal a Vercel (crear un *Deploy Hook* y guardarlo como secreto `VERCEL_DEPLOY_HOOK`).
 
+## Gráficos de “Últimos períodos”
+
+Al abrir un indicador, el gráfico de “Últimos períodos” suma una barra dorada con el **último dato disponible**,
+tomado de la misma medida que la serie (por ejemplo, la variación mensual s.e. o la interanual). Si solo existe
+una medida distinta del mismo tipo, la barra va atenuada y se avisa; si la unidad no es comparable (p. ej. un nivel
+junto a variaciones), el dato se informa debajo del gráfico sin barra.
+
+## Exportar datos
+
+El botón **⬇ Exportar CSV** del encabezado descarga **todos** los datos de la solapa activa (separador `;`, decimal con
+coma y UTF-8 con BOM, para abrir directo en Excel en español):
+
+- Principales indicadores y hojas del Excel: formato largo, una fila por celda (hoja, sección, indicador, unidad, bloque, columna, valor).
+- Series trimestrales, Balance cambiario, EMAE, IPI, Empleo y Salarios y Trabajo: una fila por serie y modalidad, con todos los períodos como columnas.
+- Fuentes: grupo, nombre y URL.
+
+Las solapas con selector de período además tienen **Descargar vista (CSV)**, que exporta solo la modalidad y el rango elegidos.
+
 ## Actualizar los datos
 
 1. Descargá el Excel nuevo del INDEC.
