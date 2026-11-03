@@ -146,3 +146,7 @@ td.gap { background: repeating-linear-gradient(135deg, transparent 0 6px, var(--
 .top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 .btn-top { font: 500 13px var(--font); color: #fff; background: #17304a; border: 1px solid #2d4560; padding: 8px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
 .btn-top:hover { border-color: var(--sun); }
+
+.sec-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 28px 0 10px; }
+.sec-row .sec { margin: 0; }
+.sec-row .btn { flex: none; }

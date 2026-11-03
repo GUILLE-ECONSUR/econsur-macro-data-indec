@@ -103,6 +103,8 @@ coma y UTF-8 con BOM, para abrir directo en Excel en español):
 - Series trimestrales, Balance cambiario, EMAE, IPI, Empleo y Salarios y Trabajo: una fila por serie y modalidad, con todos los períodos como columnas.
 - Fuentes: grupo, nombre y URL.
 
+En las hojas de detalle (Cuentas nacionales a Turismo y servicios) cada **tabla** tiene además su propio botón **⬇ Exportar CSV**, que descarga solo esa tabla.
+
 Las solapas con selector de período además tienen **Descargar vista (CSV)**, que exporta solo la modalidad y el rango elegidos.
 
 ## Actualizar los datos

@@ -119,11 +119,11 @@ export default function Drawer({ sel, onClose }) {
         </header>
         {lines.map((ln, li) =>
           block.groups
-            .filter((g) => g.name === 'ref' || g.name === 'recent')
+            .filter((g) => g.name === 'recent')
             .map((g) => (
-              <Chart key={`${li}${g.name}`} title={g.name === 'ref' ? 'Referencia' : 'Últimos períodos'}
+              <Chart key={`${li}${g.name}`} title="Últimos períodos"
                 unit={ln.u[g.name] || main.u[g.name]} cols={g.cols} cells={ln.v[g.name]}
-                extra={g.name === 'recent' ? lastPoint(block, lines, ln, g) : null} />
+                extra={lastPoint(block, lines, ln, g)} />
             )),
         )}
         <dl className="latest">

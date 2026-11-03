@@ -6,7 +6,7 @@ import Drawer from './components/Drawer.jsx'
 import History, { exportHistory } from './components/History.jsx'
 import Emae from './components/Emae.jsx'
 import { exportMonthly } from './components/MonthlyTable.jsx'
-import { exportSheet, exportSources } from './exporters.js'
+import { exportSheet, exportBlock, exportSources } from './exporters.js'
 import emaeData from './data/emae.json'
 import ipiData from './data/ipi.json'
 import empleoData from './data/empleo.json'
@@ -95,7 +95,10 @@ function Sheet({ sheet, query, onPick }) {
       {sheet.subtitle && sheet.subtitle !== sheet.name && <p className="lede">{sheet.subtitle}</p>}
       {sheet.blocks.map((b) => (
         <div key={b.id}>
-          {b.title && <h2 className="sec">{b.title}</h2>}
+          <div className="sec-row">
+            {b.title ? <h2 className="sec">{b.title}</h2> : <span />}
+            <button className="btn" onClick={() => exportBlock(sheet, b)} title="Descarga todos los datos de esta tabla en un archivo CSV">⬇ Exportar CSV</button>
+          </div>
           <BlockTable block={b} query={query} onPick={onPick} />
         </div>
       ))}
